@@ -31,4 +31,14 @@ export const ERROR_CODES = {
     code: "ACCOUNT_ALREADY_EXISTS",
     message: "An account with the provided email already exists.",
   },
+  ACCOUNT_NOT_FOUND: {
+    statusCode: 404,
+    code: "ACCOUNT_NOT_FOUND",
+    message: "Account not found.",
+  },
+  ACCOUNT_EMAIL_PASS_INVALID: {
+    statusCode: 400,
+    code: "ACCOUNT_EMAIL_PASS_INVALID",
+    message: "Invalid email or password.",
+  },
 };

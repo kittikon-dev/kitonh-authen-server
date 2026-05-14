@@ -12,7 +12,6 @@ const accountPasswordSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Account",
       required: true,
-      unique: true,
     },
     passwordHash: { type: String, required: true },
     isActive: { type: Boolean, default: true },

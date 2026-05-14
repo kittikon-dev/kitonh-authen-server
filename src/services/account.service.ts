@@ -3,7 +3,7 @@ import { HttpError } from "@/errors/http-error.js";
 import { AccountRepository } from "@/repositories/account.repository.js";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import type { CreateAccountInput } from "@/dtos/createAccount.dto.js";
+import type { CreateAccountInput } from "@/dtos/accounts/createAccount.dto.js";
 import { AccountPasswordRepository } from "@/repositories/account-password.repository.js";
 
 const createAccount = async (dto: CreateAccountInput) => {
@@ -47,4 +47,6 @@ const createAccount = async (dto: CreateAccountInput) => {
   }
 };
 
-export default { createAccount };
+export const AccountService = {
+  createAccount,
+};
