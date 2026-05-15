@@ -1,5 +1,5 @@
 import { AccountController } from "@/controllers/account.controller.js";
-import { authMiddleware } from "@/middlewares/aurth.middleware.js";
+import { authMiddleware } from "@/middlewares/auth.middleware.js";
 import catchAsync from "@/utils/catchAsync.js";
 import { Router } from "express";
 

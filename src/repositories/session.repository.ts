@@ -9,7 +9,7 @@ const updateLastUsed = async (id: string) => {
   return await Session.findByIdAndUpdate(
     id,
     { lastUsedAt: new Date() },
-    { new: true },
+    { returnDocument: "after" },
   );
 };
 
@@ -21,7 +21,7 @@ const revoke = async (id: string) => {
   const session = await Session.findOneAndUpdate(
     { _id: id, isActive: true },
     { isActive: false, revokedAt: new Date() },
-    { new: true },
+    { returnDocument: "after" },
   );
   return session;
 };

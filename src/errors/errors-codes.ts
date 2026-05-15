@@ -20,6 +20,11 @@ export const ERROR_CODES = {
     code: "INTERNAL",
     message: "Internal Server Error",
   },
+  TOKEN_EXPIRED: {
+    statusCode: 401,
+    code: "TOKEN_EXPIRED",
+    message: "Token has expired.",
+  },
 
   VALIDATION_FAILED: {
     statusCode: 400,
@@ -40,5 +45,20 @@ export const ERROR_CODES = {
     statusCode: 400,
     code: "ACCOUNT_EMAIL_PASS_INVALID",
     message: "Invalid email or password.",
+  },
+  SESSION_NOT_FOUND: {
+    statusCode: 404,
+    code: "SESSION_NOT_FOUND",
+    message: "Session not found.",
+  },
+  SESSION_REVOKED: {
+    statusCode: 401,
+    code: "SESSION_REVOKED",
+    message: "Session has been revoked.",
+  },
+  SESSION_EXPIRED: {
+    statusCode: 401,
+    code: "SESSION_EXPIRED",
+    message: "Session has expired.",
   },
 };

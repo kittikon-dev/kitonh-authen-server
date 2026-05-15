@@ -2,7 +2,6 @@ import mongoose, { Schema, Types } from "mongoose";
 
 export interface ISession {
   accountId: Types.ObjectId;
-  sessionHash: string;
   isActive: boolean;
   userAgent?: string;
   ipAddress?: string;
@@ -17,8 +16,8 @@ const sessionSchema = new Schema<ISession>(
       type: Schema.Types.ObjectId,
       ref: "Account",
       required: true,
+      index: true,
     },
-    sessionHash: { type: String, required: true },
     isActive: { type: Boolean, default: true },
     userAgent: { type: String },
     ipAddress: { type: String },
@@ -28,6 +27,8 @@ const sessionSchema = new Schema<ISession>(
   },
   { timestamps: true, versionKey: false, collection: "sessions" },
 );
+
+sessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const Session = mongoose.model<ISession>("Session", sessionSchema);
 export default Session;

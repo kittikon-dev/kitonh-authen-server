@@ -2,9 +2,7 @@ import { ENVI } from "@/configs/envi.js";
 import { loginWithEmailAndPasswordSchema } from "@/dtos/auth/loginWithEmailAndPassword.dto.js";
 import { ERROR_CODES } from "@/errors/errors-codes.js";
 import { HttpError } from "@/errors/http-error.js";
-import { SessionRepository } from "@/repositories/session.repository.js";
 import { AuthService } from "@/services/auth.service.js";
-import { verifyAccessToken } from "@/utils/jwt.js";
 import type { Request, Response } from "express";
 
 const handleLoginWithEmailAndPassword = async (req: Request, res: Response) => {
@@ -16,36 +14,66 @@ const handleLoginWithEmailAndPassword = async (req: Request, res: Response) => {
   const { accessToken, refreshToken } =
     await AuthService.loginWithEmailAndPassword(result.data);
 
-  res.cookie("access_token", accessToken, {
-    httpOnly: true,
-    secure: ENVI.MODE === "production",
-    sameSite: "strict",
-    maxAge: 1000 * 60 * 15,
-  });
-
   res.cookie("refresh_token", refreshToken, {
     httpOnly: true,
     secure: ENVI.MODE === "production",
     sameSite: "strict",
+    path: "/",
     maxAge: 7 * 24 * 60 * 60 * 1000, // expires in 7 days
   });
 
-  return res.status(201).json({ message: "Login successful", data: null });
+  return res
+    .status(201)
+    .json({ message: "Login successful", data: { accessToken } });
 };
 
 const handleLogout = async (req: Request, res: Response) => {
-  const token = req.cookies["access_token"];
-  if (token) {
-    const payload = verifyAccessToken(token);
+  const refreshToken = req.cookies["refresh_token"];
+  console.log("refreshToken", refreshToken);
+  res.clearCookie("refresh_token", {
+    httpOnly: true,
+    secure: ENVI.MODE === "production",
+    sameSite: "strict",
+    path: "/",
+  });
 
-    SessionRepository.revoke(payload.sessionId);
+  if (!refreshToken) {
+    return res.status(200).json({ message: "Logout successful", data: null });
   }
-  res.clearCookie("access_token");
-  res.clearCookie("refresh_token");
+
+  await AuthService.logout(refreshToken);
   return res.status(200).json({ message: "Logout successful", data: null });
+};
+
+const handleRefresh = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies["refresh_token"];
+  console.log("refreshToken", refreshToken);
+  if (!refreshToken) {
+    throw new HttpError(ERROR_CODES.UNAUTHORIZED);
+  }
+
+  try {
+    const tokens = await AuthService.refresh(refreshToken);
+    console.log("tokens", tokens);
+    res.cookie("refresh_token", tokens.refreshToken, {
+      httpOnly: true,
+      secure: ENVI.MODE === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // expires in 7 days
+    });
+
+    return res.status(200).json({
+      message: "Tokens refreshed successfully",
+      data: { accessToken: tokens.accessToken },
+    });
+  } catch (error) {
+    throw new HttpError(ERROR_CODES.UNAUTHORIZED);
+  }
 };
 
 export const AuthController = {
   handleLoginWithEmailAndPassword,
   handleLogout,
+  handleRefresh,
 };

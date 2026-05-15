@@ -24,7 +24,7 @@ const handleCreateAccount = async (req: Request, res: Response) => {
 };
 
 const handleGetMe = async (req: Request, res: Response) => {
-  const account = await AccountRepository.findById(req.user!.accountId);
+  const account = await AccountRepository.findById(req.user!.sub);
   if (!account) {
     throw new HttpError(ERROR_CODES.ACCOUNT_NOT_FOUND);
   }
